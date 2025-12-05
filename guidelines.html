@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Accessibility Guidelines - Reader</title>
+<style>
+  :root{
+	--bg:#f6f8fa; --card:#fff; --accent:#2563eb; --muted:#6b7280; --error:#dc2626;
+	--code-bg:#f8f9fa; --code-border:#e9ecef; --link:#2563eb;
+	font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  *:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  *:focus{outline:3px solid var(--accent);outline-offset:2px}
+  .js-focus-visible *:focus:not(.focus-visible){outline:none}
+  body{margin:0;background:var(--bg);color:#1f2937;line-height:1.6;padding:0}
+  .skip-link{position:absolute;top:-40px;left:0;background:var(--accent);color:#fff;padding:8px 16px;text-decoration:none;border-radius:4px;z-index:1000}
+  .skip-link:focus{top:8px}
+  .container{max-width:900px;margin:0 auto;padding:24px;background:var(--card);min-height:100vh}
+  header{background:var(--card);border-bottom:2px solid #e6e9ef;padding:20px 0;margin-bottom:32px;position:sticky;top:0;z-index:100}
+  header h1{margin:0;font-size:28px;font-weight:700;color:#1f2937}
+  header p{margin:8px 0 0;color:var(--muted);font-size:14px}
+  nav{background:#f8fafc;padding:16px;border-radius:8px;margin-bottom:32px;border:1px solid #e6e9ef}
+  nav h2{font-size:16px;font-weight:600;margin:0 0 12px;color:#1f2937}
+  nav ul{list-style:none;padding:0;margin:0;columns:2;column-gap:24px}
+  nav li{margin-bottom:8px;break-inside:avoid}
+  nav a{color:var(--accent);text-decoration:none;font-size:14px}
+  nav a:hover{text-decoration:underline}
+  nav a:focus{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+  main{max-width:800px;margin:0 auto}
+  h1{font-size:32px;font-weight:700;margin:48px 0 16px;color:#1f2937;line-height:1.2}
+  h2{font-size:24px;font-weight:600;margin:40px 0 16px;color:#1f2937;line-height:1.3;padding-top:16px;border-top:2px solid #e6e9ef}
+  h2:first-of-type{border-top:none;padding-top:0}
+  h3{font-size:20px;font-weight:600;margin:32px 0 12px;color:#1f2937;line-height:1.4}
+  h4{font-size:18px;font-weight:600;margin:24px 0 10px;color:#1f2937}
+  p{margin:0 0 16px;line-height:1.7}
+  ul,ol{margin:0 0 16px 24px;padding-left:8px;line-height:1.7}
+  li{margin-bottom:8px}
+  code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:"Monaco","Menlo","Ubuntu Mono","Consolas","source-code-pro",monospace;font-size:0.9em;color:#e83e8c;border:1px solid var(--code-border)}
+  pre{background:var(--code-bg);padding:16px;border-radius:8px;overflow-x:auto;border:1px solid var(--code-border);margin:16px 0}
+  pre code{background:none;padding:0;border:none;color:#1f2937;font-size:14px;line-height:1.6}
+  blockquote{border-left:4px solid var(--accent);padding-left:16px;margin:16px 0;color:var(--muted);font-style:italic}
+  a{color:var(--link);text-decoration:none}
+  a:hover{text-decoration:underline}
+  a:focus{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+  table{width:100%;border-collapse:collapse;margin:16px 0;border:1px solid #e6e9ef}
+  th{background:#f8f9fa;padding:12px;text-align:left;font-weight:600;border-bottom:2px solid #e6e9ef}
+  td{padding:12px;border-bottom:1px solid #e6e9ef}
+  tr:hover{background:#f8f9fa}
+  hr{border:none;border-top:2px solid #e6e9ef;margin:32px 0}
+  .toc{background:#f8fafc;padding:20px;border-radius:8px;margin:32px 0;border:1px solid #e6e9ef}
+  .toc h2{margin-top:0;border-top:none;padding-top:0}
+  .toc ul{list-style:none;padding-left:0}
+  .toc li{margin-bottom:8px}
+  .toc a{font-weight:500}
+  .back-to-top{position:fixed;bottom:24px;right:24px;background:var(--accent);color:#fff;padding:12px 16px;border-radius:8px;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:1000;display:none}
+  .back-to-top:focus{display:block}
+  .back-to-top.visible{display:block}
+  .loading{text-align:center;padding:48px;color:var(--muted)}
+  .error{background:#fff1f2;border:2px solid #ffd7de;color:#7f1d1d;padding:16px;border-radius:8px;margin:16px 0}
+  footer{text-align:center;padding:32px 0;color:var(--muted);font-size:14px;border-top:2px solid #e6e9ef;margin-top:64px}
+  @media (max-width: 768px) {
+	.container{padding:16px}
+	header h1{font-size:24px}
+	nav ul{columns:1}
+	h1{font-size:28px}
+	h2{font-size:22px}
+	h3{font-size:18px}
+  }
+  /* High contrast mode */
+  body.high-contrast{background:#000 !important;color:#fff !important}
+  body.high-contrast *{color:#fff !important}
+  body.high-contrast .container{background:#000 !important;border:3px solid #fff !important}
+  body.high-contrast header{border-bottom-color:#fff !important}
+  body.high-contrast code{background:#000 !important;border:1px solid #fff !important;color:#fff !important}
+  body.high-contrast pre{background:#000 !important;border:1px solid #fff !important}
+  body.high-contrast pre code{color:#fff !important}
+  body.high-contrast a{color:#fff !important;text-decoration:underline}
+  body.high-contrast table,body.high-contrast th,body.high-contrast td{border-color:#fff !important}
+  body.high-contrast .back-to-top{background:#fff !important;color:#000 !important;border:3px solid #fff !important}
+</style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <div class="container">
+	<header>
+	  <h1>Accessibility Implementation Guidelines</h1>
+	  <p>Comprehensive guide for creating accessible web applications</p>
+	</header>
+	
+	<main id="main-content" role="main">
+	  <div id="content" class="loading" role="region" aria-label="Guidelines content">
+		<p>Loading accessibility guidelines...</p>
+	  </div>
+	</main>
+	
+	<footer role="contentinfo">
+	  <p>Last updated: <span id="lastUpdated"></span></p>
+	  <p><a href="index.html">← Back to CAPTCHA Demo</a></p>
+	</footer>
+  </div>
+  
+  <a href="#main-content" class="back-to-top" aria-label="Back to top">↑ Top</a>
+  
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+// Use marked.js for proper markdown parsing
+let marked = window.marked || null;
+
+// If marked.js failed to load, use fallback parser
+if (!marked) {
+	console.warn('Marked.js not loaded, using fallback parser');
+	marked = {
+		parse: function(md) {
+			return parseMarkdownFallback(md);
+		}
+	};
+}
+
+// Configure marked.js options
+if (marked && marked.setOptions) {
+	marked.setOptions({
+		breaks: true,
+		gfm: true,
+		headerIds: true,
+		headerPrefix: 'heading-',
+		highlight: function(code, lang) {
+			return escapeHtml(code);
+		}
+	});
+}
+
+// Fallback markdown parser
+function parseMarkdownFallback(markdown) {
+	let html = markdown;
+	
+	// Code blocks first (before other processing)
+	html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+		return `<pre><code class="language-${lang || 'text'}">${escapeHtml(code.trim())}</code></pre>`;
+	});
+	
+	// Inline code (but not inside code blocks)
+	const placeholders = [];
+	let placeholderIndex = 0;
+	
+	// Protect code blocks
+	html = html.replace(/<pre>[\s\S]*?<\/pre>/g, (match) => {
+		placeholders.push(match);
+		return `__CODEBLOCK_${placeholderIndex++}__`;
+	});
+	
+	// Process inline code
+	html = html.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+	
+	// Restore code blocks
+	placeholders.forEach((block, idx) => {
+		html = html.replace(`__CODEBLOCK_${idx}__`, block);
+	});
+	
+	// Headers
+	html = html.replace(/^#### (.*$)/gim, '<h4 id="heading-$1">$1</h4>');
+	html = html.replace(/^### (.*$)/gim, '<h3 id="heading-$1">$1</h3>');
+	html = html.replace(/^## (.*$)/gim, '<h2 id="heading-$1">$1</h2>');
+	html = html.replace(/^# (.*$)/gim, '<h1 id="heading-$1">$1</h1>');
+	
+	// Bold and italic
+	html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+	html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+	html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+	
+	// Links
+	html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+		const isExternal = url.startsWith('http');
+		const target = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
+		return `<a href="${url}"${target}>${text}</a>`;
+	});
+	
+	// Blockquotes
+	html = html.replace(/^> (.+)$/gim, '<blockquote>$1</blockquote>');
+	
+	// Horizontal rules
+	html = html.replace(/^---$/gim, '<hr>');
+	html = html.replace(/^\*\*\*$/gim, '<hr>');
+	
+	// Lists - handle unordered
+	html = html.replace(/^[\*\-\+]\s+(.+)$/gim, '<li>$1</li>');
+	// Wrap consecutive list items
+	html = html.replace(/(<li>.*?<\/li>\n?)+/g, (match) => {
+		if (match.trim()) {
+			return '<ul>' + match + '</ul>';
+		}
+		return match;
+	});
+	
+	// Ordered lists
+	html = html.replace(/^\d+\.\s+(.+)$/gim, '<li>$1</li>');
+	
+	// Paragraphs
+	const blocks = html.split(/\n\n+/);
+	html = blocks.map(block => {
+		block = block.trim();
+		if (!block) return '';
+		if (block.match(/^<[h|u|o|p|d|t|b|p|h|n]/)) return block;
+		if (block.match(/^<li>/)) return block;
+		return '<p>' + block + '</p>';
+	}).join('\n\n');
+	
+	return html;
+}
+
+function escapeHtml(text) {
+	const div = document.createElement('div');
+	div.textContent = text;
+	return div.innerHTML;
+}
+
+// Generate table of contents
+function generateTOC(html) {
+  const headings = html.match(/<h[2-3][^>]*>(.*?)<\/h[2-3]>/gi) || [];
+  if (headings.length === 0) return '';
+  
+  let toc = '<nav aria-label="Table of contents"><h2>Table of Contents</h2><ul>';
+  
+  headings.forEach((heading, index) => {
+	const text = heading.replace(/<[^>]+>/g, '');
+	const level = heading.match(/<h(\d)/)[1];
+	const id = 'heading-' + index;
+	const indent = level === '3' ? ' style="padding-left: 16px;"' : '';
+	
+	// Add ID to heading in HTML
+	html = html.replace(heading, heading.replace(/<h\d/, `<h${level} id="${id}"`));
+	
+	toc += `<li${indent}><a href="#${id}">${text}</a></li>`;
+  });
+  
+  toc += '</ul></nav>';
+  
+  return { html, toc };
+}
+
+// Load and display markdown
+async function loadGuidelines() {
+  try {
+	const response = await fetch('ACCESSIBILITY_GUIDELINES.md');
+	if (!response.ok) {
+	  throw new Error('Failed to load guidelines file');
+	}
+	
+	const markdown = await response.text();
+	let html = marked.parse(markdown);
+	
+	// Generate TOC
+	const { html: updatedHtml, toc } = generateTOC(html);
+	html = updatedHtml;
+	
+	// Insert TOC after first heading
+	html = html.replace(/(<h1>.*?<\/h1>)/, '$1' + toc);
+	
+	// Update content
+	const contentDiv = document.getElementById('content');
+	contentDiv.innerHTML = html;
+	contentDiv.classList.remove('loading');
+	
+	// Update last updated
+	const lastUpdated = document.getElementById('lastUpdated');
+	lastUpdated.textContent = new Date().toLocaleDateString();
+	
+	// Add smooth scroll for anchor links
+	document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+	  anchor.addEventListener('click', function(e) {
+		e.preventDefault();
+		const target = document.querySelector(this.getAttribute('href'));
+		if (target) {
+		  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		  target.setAttribute('tabindex', '-1');
+		  target.focus();
+		}
+	  });
+	});
+	
+	// Show back to top button on scroll
+	let backToTop = document.querySelector('.back-to-top');
+	window.addEventListener('scroll', () => {
+	  if (window.pageYOffset > 300) {
+		backToTop.classList.add('visible');
+	  } else {
+		backToTop.classList.remove('visible');
+	  }
+	});
+	
+	backToTop.addEventListener('click', (e) => {
+	  e.preventDefault();
+	  window.scrollTo({ top: 0, behavior: 'smooth' });
+	});
+	
+  } catch (error) {
+	console.error('Error loading guidelines:', error);
+	const contentDiv = document.getElementById('content');
+	contentDiv.innerHTML = `
+	  <div class="error" role="alert">
+		<strong>Error loading guidelines</strong>
+		<p>Could not load the accessibility guidelines file. Please ensure ACCESSIBILITY_GUIDELINES.md exists in the same directory.</p>
+		<p><a href="ACCESSIBILITY_GUIDELINES.md" download>Download the guidelines file directly</a></p>
+	  </div>
+	`;
+	contentDiv.classList.remove('loading');
+  }
+}
+
+// Generate table of contents from HTML headings
+function generateTOC(html) {
+	// Extract all h2 and h3 headings
+	const headingRegex = /<h([2-3])[^>]*id="([^"]+)"[^>]*>(.*?)<\/h[2-3]>/gi;
+	const headings = [];
+	let match;
+	
+	while ((match = headingRegex.exec(html)) !== null) {
+		headings.push({
+			level: parseInt(match[1]),
+			id: match[2],
+			text: match[3].replace(/<[^>]+>/g, '')
+		});
+	}
+	
+	// Also try headings without IDs (for fallback parser)
+	if (headings.length === 0) {
+		const simpleHeadingRegex = /<h([2-3])[^>]*>(.*?)<\/h[2-3]>/gi;
+		let simpleMatch;
+		let index = 0;
+		
+		while ((simpleMatch = simpleHeadingRegex.exec(html)) !== null) {
+			const level = parseInt(simpleMatch[1]);
+			const text = simpleMatch[2].replace(/<[^>]+>/g, '');
+			const id = `heading-${index++}`;
+			
+			// Add ID to heading
+			html = html.replace(simpleMatch[0], simpleMatch[0].replace(/<h\d/, `<h${level} id="${id}"`));
+			
+			headings.push({ level, id, text });
+		}
+	}
+	
+	if (headings.length === 0) return { html, toc: '' };
+	
+	let toc = '<nav aria-label="Table of contents"><h2>Table of Contents</h2><ul>';
+	
+	headings.forEach(({ level, id, text }) => {
+		const indent = level === 3 ? ' style="padding-left: 16px;"' : '';
+		toc += `<li${indent}><a href="#${id}">${escapeHtml(text)}</a></li>`;
+	});
+	
+	toc += '</ul></nav>';
+	
+	return { html, toc };
+}
+
+// Load on page load
+document.addEventListener('DOMContentLoaded', loadGuidelines);
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  // Alt + T: Back to top
+  if (e.altKey && e.key === 't') {
+	e.preventDefault();
+	window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+});
+</script>
+</body>
+</html>
+
