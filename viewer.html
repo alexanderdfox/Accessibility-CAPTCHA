@@ -69,16 +69,49 @@
 	h3{font-size:18px}
   }
   /* High contrast mode */
-  body.high-contrast{background:#000 !important;color:#fff !important}
+  body.high-contrast{background:#000 !important;color:#fff !important;background-image:none !important}
   body.high-contrast *{color:#fff !important}
-  body.high-contrast .container{background:#000 !important;border:3px solid #fff !important}
-  body.high-contrast header{border-bottom-color:#fff !important}
-  body.high-contrast code{background:#000 !important;border:1px solid #fff !important;color:#fff !important}
-  body.high-contrast pre{background:#000 !important;border:1px solid #fff !important}
-  body.high-contrast pre code{color:#fff !important}
+  body.high-contrast .container{background:#000 !important;border:3px solid #fff !important;color:#fff !important}
+  body.high-contrast header{background:#000 !important;border-bottom:3px solid #fff !important;color:#fff !important}
+  body.high-contrast header h1{color:#fff !important}
+  body.high-contrast header p{color:#fff !important}
+  body.high-contrast h1,body.high-contrast h2,body.high-contrast h3,body.high-contrast h4{color:#fff !important}
+  body.high-contrast h2{border-top-color:#fff !important}
+  body.high-contrast p{color:#fff !important}
+  body.high-contrast ul,body.high-contrast ol,body.high-contrast li{color:#fff !important}
+  body.high-contrast nav{background:#000 !important;border:3px solid #fff !important;color:#fff !important}
+  body.high-contrast nav h2{color:#fff !important}
+  body.high-contrast nav a{color:#fff !important;text-decoration:underline}
+  body.high-contrast nav a:hover,body.high-contrast nav a:focus{background:#333 !important;outline:3px solid #fff !important}
+  body.high-contrast .toc{background:#000 !important;border:3px solid #fff !important;color:#fff !important}
+  body.high-contrast .toc h2{color:#fff !important;border-top:none !important}
+  body.high-contrast .toc a{color:#fff !important;text-decoration:underline}
+  body.high-contrast code{background:#000 !important;border:3px solid #fff !important;color:#fff !important}
+  body.high-contrast pre{background:#000 !important;border:3px solid #fff !important}
+  body.high-contrast pre code{background:transparent !important;border:none !important;color:#fff !important}
+  body.high-contrast blockquote{border-left:4px solid #fff !important;color:#fff !important}
   body.high-contrast a{color:#fff !important;text-decoration:underline}
-  body.high-contrast table,body.high-contrast th,body.high-contrast td{border-color:#fff !important}
+  body.high-contrast a:visited{color:#ccc !important}
+  body.high-contrast a:hover,body.high-contrast a:focus{color:#fff !important;outline:3px solid #fff !important;background:#333 !important}
+  body.high-contrast table{background:#000 !important;border:3px solid #fff !important}
+  body.high-contrast th{background:#000 !important;border:3px solid #fff !important;color:#fff !important;border-bottom:3px solid #fff !important}
+  body.high-contrast td{border:3px solid #fff !important;color:#fff !important;border-bottom:1px solid #fff !important}
+  body.high-contrast tr:hover{background:#333 !important}
+  body.high-contrast hr{border-top:3px solid #fff !important}
+  body.high-contrast footer{background:#000 !important;border-top:3px solid #fff !important;color:#fff !important}
+  body.high-contrast footer a{color:#fff !important;text-decoration:underline}
+  body.high-contrast .loading{color:#fff !important}
+  body.high-contrast .error{background:#000 !important;border:3px solid #f00 !important;color:#f00 !important}
+  body.high-contrast .error *{color:#f00 !important}
+  body.high-contrast .error a{color:#f00 !important;text-decoration:underline}
   body.high-contrast .back-to-top{background:#fff !important;color:#000 !important;border:3px solid #fff !important}
+  body.high-contrast .skip-link{background:#fff !important;color:#000 !important;border:3px solid #fff !important}
+  body.high-contrast button{border:3px solid #fff !important;background:#000 !important;color:#fff !important}
+  body.high-contrast button[role="switch"]{background:#000 !important;border:3px solid #fff !important}
+  body.high-contrast button[role="switch"][aria-checked="true"]{background:#fff !important}
+  body.high-contrast button[role="switch"][aria-checked="false"]{background:#000 !important}
+  body.high-contrast button[role="switch"] span{background:#fff !important}
+  body.high-contrast label{color:#fff !important}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="accessibility.js"></script>
