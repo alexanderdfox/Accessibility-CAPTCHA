@@ -4,7 +4,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Accessible CAPTCHA Demo</title>
+<link rel="stylesheet" href="accessibility.css">
 <style>
+  /* CAPTCHA-specific styles only */
   :root{
 	--bg:#f6f8fa; --card:#fff; --accent:#2563eb; --muted:#6b7280; --error:#dc2626;
 	--focus-ring: 0 0 0 3px rgba(37,99,235,0.5);
@@ -12,9 +14,7 @@
 	font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   }
   *:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-  /* Fallback for browsers without :focus-visible */
   *:focus{outline:3px solid var(--accent);outline-offset:2px}
-  /* Remove outline for mouse users in modern browsers */
   .js-focus-visible *:focus:not(.focus-visible){outline:none}
   .skip-link{position:absolute;top:-40px;left:0;background:var(--accent);color:#fff;padding:8px 16px;text-decoration:none;border-radius:4px;z-index:1000}
   .skip-link:focus{top:8px}
@@ -37,7 +37,6 @@
   input[type="text"].error{border-color:var(--error)}
   .error-message{color:var(--error);font-size:14px;margin-top:4px;display:block}
   .note{font-size:14px;color:#4b5563;line-height:1.5}
-  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   .footer{margin-top:24px;font-size:13px;color:#6b7280;line-height:1.6}
   .success{background:#ecfdf5;border:2px solid #bbf7d0;color:#065f46;padding:16px;border-radius:8px}
   .danger{background:#fff1f2;border:2px solid #ffd7de;color:#7f1d1d;padding:16px;border-radius:8px}
@@ -58,11 +57,9 @@
 	*{transition:none !important;animation:none !important}
 	button[role="switch"] span{transition:none !important}
   }
-  /* Browser-specific fixes */
   @supports not (display: grid) {
 	.text-challenge{display:block}
   }
-  /* Fallback for browsers without CSS custom properties */
   @supports not (--css: variables) {
 	:root{--bg:#f6f8fa;--card:#fff;--accent:#2563eb;--muted:#6b7280;--error:#dc2626}
   }
@@ -73,57 +70,8 @@
 	.actions{flex-direction:column}
 	.actions button{width:100%}
   }
-  .a11y-panel{position:fixed;top:20px;right:20px;z-index:10000}
-  .a11y-toggle{background:#1f2937;color:#fff;border:0;padding:12px 16px;border-radius:8px;cursor:pointer;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);min-height:44px}
-  .a11y-toggle:focus-visible{outline:3px solid #fff;outline-offset:2px}
-  .a11y-menu{position:absolute;top:100%;right:0;margin-top:8px;background:#fff;border:2px solid #e6e9ef;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.15);padding:20px;min-width:320px;max-width:400px;max-height:80vh;overflow-y:auto;display:none}
-  .a11y-menu.open{display:block}
-  .a11y-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #e6e9ef}
-  .a11y-section:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
-  .a11y-section h3{font-size:16px;font-weight:600;margin:0 0 12px;color:#1f2937}
-  .a11y-control{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:12px}
-  .a11y-control:last-child{margin-bottom:0}
-  .a11y-control label{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;flex:1;margin:0}
-  .a11y-control input[type="range"]{flex:1;max-width:150px}
-  .a11y-value{font-size:12px;color:#6b7280;min-width:40px;text-align:right}
-  select.a11y-select{padding:8px 12px;border-radius:6px;border:2px solid #e6e9ef;font-size:14px;min-height:40px;width:100%}
-  .high-contrast{filter:contrast(1.5) brightness(1.1)}
-  .high-contrast button,.high-contrast input,.high-contrast select{border-width:3px !important}
-  .large-text{font-size:125%}
-  .extra-large-text{font-size:150%}
-  .huge-text{font-size:200%}
-  .reduce-motion *{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important}
-  .enhanced-focus *:focus-visible{outline-width:4px !important;outline-offset:4px !important}
-  @media (prefers-contrast: high) {
-	*{border-width:2px !important}
-	button,input,select{border-width:3px !important}
-  }
-  @media (prefers-reduced-motion: reduce) {
-	.a11y-menu{transition:none}
-  }
-  /* Color blindness filters */
-  .color-protanopia{filter:url(#protanopia)}
-  .color-deuteranopia{filter:url(#deuteranopia)}
-  .color-tritanopia{filter:url(#tritanopia)}
-  .color-monochrome{filter:grayscale(100%)}
-  /* Reading guide */
-  .reading-guide{position:absolute;background:rgba(255,255,0,0.3);pointer-events:none;z-index:9999;display:none}
-  .reading-guide.active{display:block}
-  /* Tab order indicator */
-  .tab-indicator{position:absolute;border:3px solid #ff0000;border-radius:4px;pointer-events:none;z-index:10001;display:none}
-  .tab-indicator.active{display:block;animation:pulse 1s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-  /* Voice control hints */
-  [data-voice-label]{position:relative}
-  [data-voice-label]::after{content:attr(data-voice-label);position:absolute;left:100%;margin-left:8px;padding:4px 8px;background:#000;color:#fff;border-radius:4px;font-size:12px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.2s;z-index:10002}
-  .voice-control-mode [data-voice-label]::after{opacity:1}
-  /* Screen reader optimizations */
-  .sr-optimize-nvda *[role="button"]:focus::before,
-  .sr-optimize-jaws *[role="button"]:focus::before{content:"Button: "}
-  /* High contrast mode - comprehensive font color fixes */
-  body.high-contrast{background:#000 !important;color:#fff !important}
+  /* High contrast mode overrides for CAPTCHA-specific elements */
   body.high-contrast .card{background:#000 !important;border:3px solid #fff !important;color:#fff !important}
-  /* Text elements - white on black */
   body.high-contrast h1,body.high-contrast h2,body.high-contrast h3,body.high-contrast h4{color:#fff !important}
   body.high-contrast p,body.high-contrast .lead{color:#fff !important}
   body.high-contrast label{color:#fff !important}
@@ -131,8 +79,6 @@
   body.high-contrast .footer{color:#fff !important}
   body.high-contrast small,body.high-contrast .kv{color:#fff !important}
   body.high-contrast .status{background:#000 !important;border:3px solid #fff !important;color:#fff !important}
-  /* Buttons - white borders, white text on black */
-  body.high-contrast button{border:3px solid #fff !important;background:#000 !important;color:#fff !important}
   body.high-contrast button.mode{background:#000 !important;color:#fff !important;border:3px solid #fff !important}
   body.high-contrast button.mode[aria-pressed="true"]{background:#fff !important;color:#000 !important;border:3px solid #fff !important}
   body.high-contrast button.primary{background:#fff !important;color:#000 !important;border:3px solid #fff !important}
@@ -142,183 +88,22 @@
   body.high-contrast button[role="switch"][aria-checked="false"]{background:#000 !important}
   body.high-contrast button[role="switch"] span{background:#fff !important}
   body.high-contrast button:disabled{opacity:0.5 !important;color:#888 !important}
-  /* Form elements */
   body.high-contrast input{border:3px solid #fff !important;background:#000 !important;color:#fff !important}
   body.high-contrast input::placeholder{color:#888 !important}
-  body.high-contrast select{border:3px solid #fff !important;background:#000 !important;color:#fff !important}
-  body.high-contrast textarea{border:3px solid #fff !important;background:#000 !important;color:#fff !important}
-  body.high-contrast select option{background:#000 !important;color:#fff !important}
-  /* Colored messages - keep distinct colors for accessibility */
   body.high-contrast .success{background:#000 !important;border:3px solid #0f0 !important;color:#0f0 !important}
   body.high-contrast .success *{color:#0f0 !important}
   body.high-contrast .danger{background:#000 !important;border:3px solid #f00 !important;color:#f00 !important}
   body.high-contrast .danger *{color:#f00 !important}
   body.high-contrast .error-message{color:#f00 !important}
-  /* Accessibility panel */
-  body.high-contrast .a11y-menu{background:#000 !important;border:3px solid #fff !important;color:#fff !important}
-  body.high-contrast .a11y-toggle{background:#fff !important;color:#000 !important;border:3px solid #fff !important}
-  body.high-contrast .a11y-section{border-bottom-color:#fff !important}
-  body.high-contrast .a11y-section h3{color:#fff !important}
-  body.high-contrast .a11y-control label{color:#fff !important}
-  body.high-contrast .a11y-value{color:#fff !important}
-  body.high-contrast .a11y-select{background:#000 !important;color:#fff !important;border:3px solid #fff !important}
-  /* Links */
-  body.high-contrast a{color:#fff !important;text-decoration:underline}
-  body.high-contrast a:visited{color:#ccc !important}
-  body.high-contrast a:hover,body.high-contrast a:focus{color:#fff !important;outline:3px solid #fff !important;background:#333 !important}
-  body.high-contrast .skip-link{background:#fff !important;color:#000 !important}
-  /* Remove gradient background in high contrast */
   body.high-contrast{background:#000 !important;background-image:none !important}
-  /* Simplified language indicator */
-  .simplified-text{font-size:110%;line-height:1.8;max-width:65ch}
 </style>
-<svg style="position:absolute;width:0;height:0">
-  <defs>
-	<filter id="protanopia" color-interpolation-filters="sRGB">
-	  <feColorMatrix type="matrix" values="0.567, 0.433, 0, 0, 0  0.558, 0.442, 0, 0, 0  0, 0.242, 0.758, 0, 0  0, 0, 0, 1, 0"/>
-	</filter>
-	<filter id="deuteranopia" color-interpolation-filters="sRGB">
-	  <feColorMatrix type="matrix" values="0.625, 0.375, 0, 0, 0  0.7, 0.3, 0, 0, 0  0, 0.3, 0.7, 0, 0  0, 0, 0, 1, 0"/>
-	</filter>
-	<filter id="tritanopia" color-interpolation-filters="sRGB">
-	  <feColorMatrix type="matrix" values="0.95, 0.05, 0, 0, 0  0, 0.433, 0.567, 0, 0  0, 0.475, 0.525, 0, 0  0, 0, 0, 1, 0"/>
-	</filter>
-  </defs>
-</svg>
+<script src="accessibility.js"></script>
 </head>
 <body>
   <a href="#main-content" class="skip-link">Skip to main content</a>
   
-  <!-- Accessibility Settings Panel -->
-  <div class="a11y-panel" role="region" aria-label="Accessibility settings">
-	<button id="a11yToggle" class="a11y-toggle" aria-label="Open accessibility settings" aria-expanded="false" aria-controls="a11yMenu">
-	  ♿ Accessibility
-	</button>
-	<div id="a11yMenu" class="a11y-menu" role="menu" aria-labelledby="a11yToggle">
-	  <div class="a11y-section">
-		<h3>Visual Settings</h3>
+  <!-- Accessibility panel will be auto-injected by accessibility.js -->
 		
-		<div class="a11y-control">
-		  <label for="highContrast">
-			<input type="checkbox" id="highContrast" role="menuitemcheckbox" aria-checked="false">
-			<span>High contrast mode</span>
-		  </label>
-		</div>
-		
-		<div class="a11y-control">
-		  <label for="textSize">
-			<span>Text size:</span>
-		  </label>
-		  <input type="range" id="textSize" min="100" max="200" value="100" step="25" aria-label="Text size">
-		  <span class="a11y-value" id="textSizeValue">100%</span>
-		</div>
-		
-		<div class="a11y-control">
-		  <label for="colorScheme">
-			<span>Color scheme:</span>
-		  </label>
-		  <select id="colorScheme" class="a11y-select" role="menuitem" aria-label="Color scheme">
-			<option value="default">Default</option>
-			<option value="protanopia">Protanopia (red-blind)</option>
-			<option value="deuteranopia">Deuteranopia (green-blind)</option>
-			<option value="tritanopia">Tritanopia (blue-blind)</option>
-			<option value="monochrome">Monochrome</option>
-		  </select>
-		</div>
-		
-		<div class="a11y-control">
-		  <label for="enhancedFocus">
-			<input type="checkbox" id="enhancedFocus" role="menuitemcheckbox" aria-checked="false">
-			<span>Enhanced focus indicators</span>
-		  </label>
-		</div>
-	  </div>
-	  
-	  <div class="a11y-section">
-		<h3>Motion & Animation</h3>
-		
-		<div class="a11y-control">
-		  <label for="reduceMotion">
-			<input type="checkbox" id="reduceMotion" role="menuitemcheckbox" aria-checked="false">
-			<span>Reduce motion</span>
-		  </label>
-		</div>
-	  </div>
-	  
-	  <div class="a11y-section">
-		<h3>Language & Reading</h3>
-		
-		<div class="a11y-control">
-		  <label for="simpleLanguage">
-			<input type="checkbox" id="simpleLanguage" role="menuitemcheckbox" aria-checked="false">
-			<span>Simplified language</span>
-		  </label>
-		</div>
-		
-		<div class="a11y-control">
-		  <label for="readingGuide">
-			<input type="checkbox" id="readingGuide" role="menuitemcheckbox" aria-checked="false">
-			<span>Reading guide (line highlight)</span>
-		  </label>
-		</div>
-	  </div>
-	  
-	  <div class="a11y-section">
-		<h3>Keyboard & Navigation</h3>
-		
-		<div class="a11y-control">
-		  <label for="keyboardShortcuts">
-			<input type="checkbox" id="keyboardShortcuts" role="menuitemcheckbox" aria-checked="true">
-			<span>Enable keyboard shortcuts</span>
-		  </label>
-		</div>
-		
-		<div class="a11y-control">
-		  <label for="tabOrder">
-			<input type="checkbox" id="tabOrder" role="menuitemcheckbox" aria-checked="false">
-			<span>Visual tab order indicator</span>
-		  </label>
-		</div>
-	  </div>
-	  
-	  <div class="a11y-section">
-		<h3>Screen Reader</h3>
-		
-		<div class="a11y-control">
-		  <label for="screenReaderMode">
-			<select id="screenReaderMode" class="a11y-select" role="menuitem" aria-label="Screen reader optimization">
-			  <option value="auto">Auto-detect</option>
-			  <option value="nvda">NVDA</option>
-			  <option value="jaws">JAWS</option>
-			  <option value="voiceover">VoiceOver (macOS/iOS)</option>
-			  <option value="talkback">TalkBack (Android)</option>
-			  <option value="orca">Orca (Linux)</option>
-			  <option value="narrator">Narrator (Windows)</option>
-			</select>
-			<span style="font-size:12px;margin-top:4px;display:block">Screen reader optimization</span>
-		  </label>
-		</div>
-		
-		<div class="a11y-control">
-		  <label for="announceChanges">
-			<input type="checkbox" id="announceChanges" role="menuitemcheckbox" aria-checked="true">
-			<span>Announce all changes</span>
-		  </label>
-		</div>
-		
-		<div class="a11y-control">
-		  <label for="ariaLive">
-			<input type="checkbox" id="ariaLive" role="menuitemcheckbox" aria-checked="true">
-			<span>Enhanced ARIA live regions</span>
-		  </label>
-		</div>
-	  </div>
-	  
-	  <div class="a11y-section">
-		<button class="primary" style="width:100%" onclick="resetA11ySettings()">Reset to defaults</button>
-	  </div>
-	</div>
-  </div>
   <main class="card" id="main-content" role="main" aria-labelledby="title">
 	<h1 id="title">Accessible CAPTCHA Demo</h1>
 	<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;flex-wrap:wrap;gap:12px">
@@ -421,6 +206,74 @@
   - Expose hooks where server verification should be performed
 */
 
+/* ---------- Helper functions using A11yPlugin API ---------- */
+
+// Use A11yPlugin API for screen reader announcements
+function announceToScreenReader(message, priority = 'polite') {
+  if (window.A11yPlugin && window.A11yPlugin.announceToScreenReader) {
+	window.A11yPlugin.announceToScreenReader(message, priority);
+  } else {
+	// Fallback if plugin not loaded yet
+	const lr = document.getElementById('lr');
+	if (lr) {
+	  lr.setAttribute('aria-live', priority);
+	  lr.textContent = message;
+	  setTimeout(() => { lr.textContent = ''; }, 1000);
+	}
+  }
+}
+
+// Use A11yPlugin API for audio alerts
+function playSuccessSound() {
+  if (window.A11yPlugin && window.A11yPlugin.playSuccessSound) {
+	window.A11yPlugin.playSuccessSound();
+  }
+}
+
+function playErrorSound() {
+  if (window.A11yPlugin && window.A11yPlugin.playErrorSound) {
+	window.A11yPlugin.playErrorSound();
+  }
+}
+
+function playInfoSound() {
+  if (window.A11yPlugin && window.A11yPlugin.playInfoSound) {
+	window.A11yPlugin.playInfoSound();
+  }
+}
+
+function playModeChangeSound() {
+  // Use info sound for mode changes
+  playInfoSound();
+}
+
+// Toggle audio alerts using plugin API
+function toggleAudioAlerts() {
+  if (window.A11yPlugin && window.A11yPlugin.toggleAudioAlerts) {
+	window.A11yPlugin.toggleAudioAlerts();
+	// Update local toggle button state
+	const toggle = document.getElementById('audioToggle');
+	if (toggle) {
+	  const saved = window.safeStorage ? window.safeStorage.getItem('audioAlertsEnabled') : null;
+	  const enabled = saved !== null ? saved === 'true' : true;
+	  toggle.setAttribute('aria-checked', enabled.toString());
+	}
+  }
+}
+
+// Load audio preference
+function loadAudioPreference() {
+  if (window.safeStorage) {
+	const saved = window.safeStorage.getItem('audioAlertsEnabled');
+	if (saved !== null) {
+	  const toggle = document.getElementById('audioToggle');
+	  if (toggle) {
+		toggle.setAttribute('aria-checked', saved);
+	  }
+	}
+  }
+}
+
 /* ---------- Browser Compatibility Layer ---------- */
 (function() {
   'use strict';
@@ -476,67 +329,69 @@
   browserInfo.supportsSpeechRecognition = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
   browserInfo.supportsMediaQueries = !!(window.matchMedia);
   
-  // localStorage with fallback
-  try {
-	localStorage.setItem('__test__', '1');
-	localStorage.removeItem('__test__');
-	browserInfo.supportsLocalStorage = true;
-  } catch (e) {
-	browserInfo.supportsLocalStorage = false;
-  }
-  
-  // Safe localStorage wrapper with fallback
-  const safeStorage = {
-	setItem: function(key, value) {
-	  try {
-		if (browserInfo.supportsLocalStorage) {
-		  localStorage.setItem(key, value);
-		} else {
-		  // Fallback to sessionStorage or memory
-		  try {
-			sessionStorage.setItem(key, value);
-		  } catch (e) {
-			window._memoryStorage = window._memoryStorage || {};
-			window._memoryStorage[key] = value;
-		  }
-		}
-	  } catch (e) {
-		console.warn('Storage not available:', e);
-	  }
-	},
-	getItem: function(key) {
-	  try {
-		if (browserInfo.supportsLocalStorage) {
-		  return localStorage.getItem(key);
-		} else {
-		  try {
-			return sessionStorage.getItem(key);
-		  } catch (e) {
-			return window._memoryStorage && window._memoryStorage[key] || null;
-		  }
-		}
-	  } catch (e) {
-		return null;
-	  }
-	},
-	removeItem: function(key) {
-	  try {
-		if (browserInfo.supportsLocalStorage) {
-		  localStorage.removeItem(key);
-		} else {
-		  try {
-			sessionStorage.removeItem(key);
-		  } catch (e) {
-			if (window._memoryStorage) {
-			  delete window._memoryStorage[key];
+  // Use safeStorage from plugin if available, otherwise create fallback
+  if (!window.safeStorage) {
+	// localStorage with fallback
+	try {
+	  localStorage.setItem('__test__', '1');
+	  localStorage.removeItem('__test__');
+	  browserInfo.supportsLocalStorage = true;
+	} catch (e) {
+	  browserInfo.supportsLocalStorage = false;
+	}
+	
+	// Safe localStorage wrapper with fallback
+	window.safeStorage = {
+	  setItem: function(key, value) {
+		try {
+		  if (browserInfo.supportsLocalStorage) {
+			localStorage.setItem(key, value);
+		  } else {
+			try {
+			  sessionStorage.setItem(key, value);
+			} catch (e) {
+			  window._memoryStorage = window._memoryStorage || {};
+			  window._memoryStorage[key] = value;
 			}
 		  }
+		} catch (e) {
+		  console.warn('Storage not available:', e);
 		}
-	  } catch (e) {
-		console.warn('Storage removal failed:', e);
+	  },
+	  getItem: function(key) {
+		try {
+		  if (browserInfo.supportsLocalStorage) {
+			return localStorage.getItem(key);
+		  } else {
+			try {
+			  return sessionStorage.getItem(key);
+			} catch (e) {
+			  return window._memoryStorage && window._memoryStorage[key] || null;
+			}
+		  }
+		} catch (e) {
+		  return null;
+		}
+	  },
+	  removeItem: function(key) {
+		try {
+		  if (browserInfo.supportsLocalStorage) {
+			localStorage.removeItem(key);
+		  } else {
+			try {
+			  sessionStorage.removeItem(key);
+			} catch (e) {
+			  if (window._memoryStorage) {
+				delete window._memoryStorage[key];
+			  }
+			}
+		  }
+		} catch (e) {
+		  console.warn('Storage removal failed:', e);
+		}
 	  }
-	}
-  };
+	};
+  }
   
   // Media query polyfill for older browsers
   if (!window.matchMedia) {
@@ -608,7 +463,6 @@
   
   // Export for global use
   window.browserInfo = browserInfo;
-  window.safeStorage = safeStorage;
   
   // Show browser compatibility warning if needed
   if (browserInfo.isIE && browserInfo.version < 11) {
@@ -622,136 +476,6 @@
 /* ---------- Configuration ---------- */
 const BEHAVIOR_MIN_SCORE = 0.6; // threshold for demo "invisible pass"
 const BEHAVIOR_RUN_SECONDS = 5; // how long to collect events before evaluating
-
-/* ---------- Audio Alert System for Accessibility ---------- */
-let audioEnabled = true;
-let audioContext = null;
-
-// Initialize audio context (requires user interaction) - cross-browser compatible
-function initAudioContext() {
-  if (!audioContext && (window.AudioContext || window.webkitAudioContext)) {
-	try {
-	  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-	  audioContext = new AudioContextClass();
-	  
-	  // Handle browser-specific audio context issues
-	  if (audioContext.state === 'suspended') {
-		// Some browsers suspend audio context until user interaction
-		audioContext.resume().catch(e => {
-		  console.warn('Audio context resume failed:', e);
-		});
-	  }
-	} catch (e) {
-	  console.warn('Audio context initialization failed:', e);
-	  // Gracefully degrade if audio is not supported
-	  audioEnabled = false;
-	}
-  }
-}
-
-// Play a tone with given frequency, duration, and type
-function playTone(frequency, duration, type = 'sine', volume = 0.3) {
-  if (!audioEnabled || !audioContext) return;
-  
-  try {
-	// Resume audio context if suspended (browser autoplay policy)
-	if (audioContext.state === 'suspended') {
-	  audioContext.resume();
-	}
-	
-	const oscillator = audioContext.createOscillator();
-	const gainNode = audioContext.createGain();
-	
-	oscillator.connect(gainNode);
-	gainNode.connect(audioContext.destination);
-	
-	oscillator.type = type;
-	oscillator.frequency.value = frequency;
-	
-	// Apply volume with fade in/out to avoid clicks
-	gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-	gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + 0.01);
-	gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + duration - 0.01);
-	
-	oscillator.start(audioContext.currentTime);
-	oscillator.stop(audioContext.currentTime + duration);
-  } catch (e) {
-	console.warn('Audio playback failed:', e);
-  }
-}
-
-// Play success sound (ascending pleasant tone)
-function playSuccessSound() {
-  if (!audioEnabled) return;
-  playTone(523.25, 0.15, 'sine', 0.25); // C5
-  setTimeout(() => playTone(659.25, 0.15, 'sine', 0.25), 150); // E5
-  setTimeout(() => playTone(783.99, 0.2, 'sine', 0.25), 300); // G5
-}
-
-// Play error sound (descending harsh tone)
-function playErrorSound() {
-  if (!audioEnabled) return;
-  playTone(440, 0.1, 'square', 0.3); // A4
-  setTimeout(() => playTone(349.23, 0.15, 'square', 0.3), 100); // F4
-  setTimeout(() => playTone(261.63, 0.2, 'square', 0.3), 250); // C4
-}
-
-// Play alert sound (attention-grabbing beep)
-function playAlertSound() {
-  if (!audioEnabled) return;
-  playTone(800, 0.2, 'sine', 0.35);
-  setTimeout(() => playTone(800, 0.2, 'sine', 0.35), 250);
-}
-
-// Play info sound (gentle notification)
-function playInfoSound() {
-  if (!audioEnabled) return;
-  playTone(600, 0.15, 'sine', 0.2);
-}
-
-// Play mode change sound (short click)
-function playModeChangeSound() {
-  if (!audioEnabled) return;
-  playTone(500, 0.1, 'sine', 0.15);
-}
-
-// Toggle audio alerts
-function toggleAudioAlerts() {
-  audioEnabled = !audioEnabled;
-  const toggle = document.getElementById('audioToggle');
-  if (toggle) {
-	toggle.setAttribute('aria-checked', audioEnabled.toString());
-	// Play a test sound when enabling
-	if (audioEnabled) {
-	  initAudioContext();
-	  setTimeout(() => playInfoSound(), 100);
-	  announceToScreenReader('Audio alerts enabled.');
-	} else {
-	  announceToScreenReader('Audio alerts disabled.');
-	}
-  }
-  // Save preference
-  safeStorage.setItem('audioAlertsEnabled', audioEnabled.toString());
-}
-
-// Load audio preference
-function loadAudioPreference() {
-  const saved = safeStorage.getItem('audioAlertsEnabled');
-  if (saved !== null) {
-	audioEnabled = saved === 'true';
-	const toggle = document.getElementById('audioToggle');
-	if (toggle) {
-	  toggle.setAttribute('aria-checked', audioEnabled.toString());
-	}
-  }
-}
-
-// Initialize audio on first user interaction
-document.addEventListener('click', () => {
-  if (!audioContext) {
-	initAudioContext();
-  }
-}, { once: true });
 
 /* ---------- Mode selection UI ---------- */
 const modeButtons = document.querySelectorAll('.mode');
@@ -947,7 +671,7 @@ async function checkPlatformAuthenticatorAvailable() {
 
 // Check if we have a stored credential
 function hasStoredCredential() {
-  return !!safeStorage.getItem(STORAGE_KEY);
+  return !!window.safeStorage.getItem(STORAGE_KEY);
 }
 
 // Update passkey UI based on state
@@ -1031,7 +755,7 @@ async function createPasskey() {
 	if (credential) {
 	  // Store credential ID for demo (in production, send to server)
 	  const credentialId = arrayBufferToBase64url(credential.rawId);
-	  safeStorage.setItem(STORAGE_KEY, credentialId);
+	  window.safeStorage.setItem(STORAGE_KEY, credentialId);
 	  
 	  setStatus('Passkey created successfully!');
 	  announceToScreenReader('Passkey created successfully. You can now authenticate.', 'assertive');
@@ -1067,7 +791,7 @@ async function authenticatePasskey() {
 	return;
   }
   
-  const storedCredentialId = safeStorage.getItem(STORAGE_KEY);
+  const storedCredentialId = window.safeStorage.getItem(STORAGE_KEY);
   if (!storedCredentialId) {
 	const errorMsg = 'No passkey found. Please create one first.';
 	setStatus(errorMsg);
@@ -1128,7 +852,7 @@ async function authenticatePasskey() {
 	
 	// Clear invalid credential
 	if (err.name === 'NotFoundError' || err.name === 'InvalidStateError') {
-	  safeStorage.removeItem(STORAGE_KEY);
+	  window.safeStorage.removeItem(STORAGE_KEY);
 	  updatePasskeyUI();
 	}
   }
@@ -1136,7 +860,7 @@ async function authenticatePasskey() {
 
 // Clear stored passkey
 function clearStoredPasskey() {
-  safeStorage.removeItem(STORAGE_KEY);
+  window.safeStorage.removeItem(STORAGE_KEY);
   updatePasskeyUI();
   setStatus('Stored passkey cleared. You can create a new one.');
   announceToScreenReader('Stored passkey cleared.');
@@ -1314,12 +1038,10 @@ document.getElementById('startBtn').addEventListener('click', ()=>{
 
 // Wire up passkey buttons
 document.getElementById('createPasskey')?.addEventListener('click', () => {
-  initAudioContext();
   createPasskey();
 });
 
 document.getElementById('authenticatePasskey')?.addEventListener('click', () => {
-  initAudioContext();
   authenticatePasskey();
 });
 
@@ -1329,7 +1051,6 @@ document.getElementById('clearPasskey')?.addEventListener('click', () => {
 
 // Wire up audio toggle
 document.getElementById('audioToggle')?.addEventListener('click', () => {
-  initAudioContext();
   toggleAudioAlerts();
 });
 
@@ -1379,17 +1100,6 @@ function setStatus(text){
   const s = document.getElementById('status');
   s.textContent = text;
   s.setAttribute('aria-label', `Status: ${text}`);
-}
-
-function announceToScreenReader(message, priority = 'polite'){
-  const lr = document.getElementById('lr');
-  lr.setAttribute('aria-live', priority);
-  lr.textContent = message;
-  
-  // Clear after announcement to allow re-announcement
-  setTimeout(() => {
-	lr.textContent = '';
-  }, 1000);
 }
 
 function escapeHtml(s){ 
@@ -1453,523 +1163,6 @@ modeButtons.forEach((btn, index) => {
 	// Update tabindex for roving tabindex pattern
 	modeButtons.forEach(b => b.setAttribute('tabindex', '-1'));
 	btn.setAttribute('tabindex', '0');
-  });
-});
-
-/* ---------- Comprehensive Accessibility Features ---------- */
-
-// Accessibility state
-const a11yState = {
-  highContrast: false,
-  textSize: 100,
-  colorScheme: 'default',
-  enhancedFocus: false,
-  reduceMotion: false,
-  simpleLanguage: false,
-  readingGuide: false,
-  keyboardShortcuts: true,
-  tabOrder: false,
-  screenReaderMode: 'auto',
-  announceChanges: true,
-  ariaLive: true,
-  voiceControl: false
-};
-
-// Simplified language dictionary
-const simpleLanguageMap = {
-  'Choose verification mode:': 'Pick how to verify:',
-  'Automatic (invisible)': 'Automatic',
-  'Passkey / WebAuthn': 'Use passkey',
-  'Text question': 'Text question',
-  'Keyboard-only': 'Keyboard only',
-  'Start verification': 'Start',
-  'Creating passkey... Please follow your device\'s prompts.': 'Creating passkey. Follow screen.',
-  'Authenticating with passkey... Please verify your identity.': 'Authenticating. Verify now.',
-  'Text question answered correctly.': 'Correct!',
-  'Incorrect answer. Try another method or try again.': 'Wrong answer. Try again.',
-  'Accessibility question': 'Question',
-  'Submit': 'Send',
-  'Cancel': 'Stop',
-  'Verification passed': 'Success!',
-  'Verification failed': 'Failed'
-};
-
-// Detect screen reader
-function detectScreenReader() {
-  if (a11yState.screenReaderMode !== 'auto') {
-	return a11yState.screenReaderMode;
-  }
-  
-  // Check for screen reader indicators
-  const ua = navigator.userAgent.toLowerCase();
-  const isWindows = ua.includes('win');
-  const isMac = ua.includes('mac');
-  const isIOS = /iphone|ipad|ipod/.test(ua);
-  const isAndroid = ua.includes('android');
-  const isLinux = ua.includes('linux');
-  
-  // Check for screen reader specific behaviors
-  if (window.speechSynthesis && window.speechSynthesis.getVoices().length > 0) {
-	// Could be VoiceOver, Narrator, or other
-	if (isMac || isIOS) return 'voiceover';
-	if (isWindows) return 'narrator';
-  }
-  
-  // Default based on OS
-  if (isWindows) return 'nvda'; // Most common on Windows
-  if (isMac || isIOS) return 'voiceover';
-  if (isAndroid) return 'talkback';
-  if (isLinux) return 'orca';
-  
-  return 'nvda'; // Default fallback
-}
-
-// Apply screen reader optimizations
-function applyScreenReaderOptimizations() {
-  const srMode = detectScreenReader();
-  document.body.className = document.body.className.replace(/sr-optimize-\w+/g, '');
-  document.body.classList.add(`sr-optimize-${srMode}`);
-  
-  // NVDA/JAWS specific optimizations
-  if (srMode === 'nvda' || srMode === 'jaws') {
-	// Add button labels
-	document.querySelectorAll('button').forEach(btn => {
-	  if (!btn.getAttribute('aria-label') && !btn.textContent.trim()) {
-		btn.setAttribute('aria-label', btn.textContent || 'Button');
-	  }
-	});
-  }
-  
-  // VoiceOver specific optimizations
-  if (srMode === 'voiceover') {
-	// Ensure landmarks are properly announced
-	document.querySelectorAll('[role]').forEach(el => {
-	  if (!el.getAttribute('aria-label') && !el.getAttribute('aria-labelledby')) {
-		const label = el.textContent.substring(0, 50);
-		if (label) el.setAttribute('aria-label', label);
-	  }
-	});
-  }
-}
-
-// High contrast mode
-function toggleHighContrast(enabled) {
-  a11yState.highContrast = enabled;
-  if (enabled) {
-	document.body.classList.add('high-contrast');
-  } else {
-	document.body.classList.remove('high-contrast');
-  }
-  saveA11ySettings();
-  announceToScreenReader(enabled ? 'High contrast mode enabled' : 'High contrast mode disabled');
-}
-
-// Text size control
-function setTextSize(size) {
-  a11yState.textSize = size;
-  document.body.style.fontSize = size + '%';
-  document.getElementById('textSizeValue').textContent = size + '%';
-  saveA11ySettings();
-}
-
-// Color scheme (color blindness)
-function setColorScheme(scheme) {
-  a11yState.colorScheme = scheme;
-  document.body.className = document.body.className.replace(/color-\w+/g, '');
-  if (scheme !== 'default') {
-	document.body.classList.add(`color-${scheme}`);
-  }
-  saveA11ySettings();
-  announceToScreenReader(`Color scheme changed to ${scheme}`);
-}
-
-// Enhanced focus indicators
-function toggleEnhancedFocus(enabled) {
-  a11yState.enhancedFocus = enabled;
-  if (enabled) {
-	document.body.classList.add('enhanced-focus');
-  } else {
-	document.body.classList.remove('enhanced-focus');
-  }
-  saveA11ySettings();
-}
-
-// Reduce motion
-function toggleReduceMotion(enabled) {
-  a11yState.reduceMotion = enabled;
-  if (enabled) {
-	document.body.classList.add('reduce-motion');
-  } else {
-	document.body.classList.remove('reduce-motion');
-  }
-  saveA11ySettings();
-}
-
-// Simplified language
-function toggleSimpleLanguage(enabled) {
-  a11yState.simpleLanguage = enabled;
-  if (enabled) {
-	applySimpleLanguage();
-  } else {
-	removeSimpleLanguage();
-  }
-  saveA11ySettings();
-  announceToScreenReader(enabled ? 'Simplified language enabled' : 'Simplified language disabled');
-}
-
-function applySimpleLanguage() {
-  document.querySelectorAll('*').forEach(el => {
-	if (el.children.length === 0 && el.textContent) {
-	  const text = el.textContent.trim();
-	  if (simpleLanguageMap[text]) {
-		el.setAttribute('data-original-text', text);
-		el.textContent = simpleLanguageMap[text];
-	  }
-	}
-  });
-}
-
-function removeSimpleLanguage() {
-  document.querySelectorAll('[data-original-text]').forEach(el => {
-	el.textContent = el.getAttribute('data-original-text');
-	el.removeAttribute('data-original-text');
-  });
-}
-
-// Reading guide (line highlight)
-let readingGuideEl = null;
-function toggleReadingGuide(enabled) {
-  a11yState.readingGuide = enabled;
-  if (enabled) {
-	if (!readingGuideEl) {
-	  readingGuideEl = document.createElement('div');
-	  readingGuideEl.className = 'reading-guide';
-	  readingGuideEl.setAttribute('aria-hidden', 'true');
-	  document.body.appendChild(readingGuideEl);
-	}
-	readingGuideEl.classList.add('active');
-	updateReadingGuide();
-	document.addEventListener('mousemove', updateReadingGuide);
-	document.addEventListener('keydown', updateReadingGuideOnKey);
-  } else {
-	if (readingGuideEl) {
-	  readingGuideEl.classList.remove('active');
-	}
-	document.removeEventListener('mousemove', updateReadingGuide);
-	document.removeEventListener('keydown', updateReadingGuideOnKey);
-  }
-  saveA11ySettings();
-}
-
-function updateReadingGuide(e) {
-  if (!readingGuideEl || !a11yState.readingGuide) return;
-  const y = e ? e.clientY : window.innerHeight / 2;
-  readingGuideEl.style.top = (y - 15) + 'px';
-  readingGuideEl.style.left = '0';
-  readingGuideEl.style.width = '100%';
-  readingGuideEl.style.height = '30px';
-}
-
-function updateReadingGuideOnKey(e) {
-  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-	setTimeout(() => {
-	  const focused = document.activeElement;
-	  if (focused && focused.getBoundingClientRect) {
-		const rect = focused.getBoundingClientRect();
-		updateReadingGuide({clientY: rect.top + rect.height / 2});
-	  }
-	}, 100);
-  }
-}
-
-// Tab order indicator
-let tabIndicatorEl = null;
-let tabOrderIndex = 0;
-function toggleTabOrder(enabled) {
-  a11yState.tabOrder = enabled;
-  if (enabled) {
-	if (!tabIndicatorEl) {
-	  tabIndicatorEl = document.createElement('div');
-	  tabIndicatorEl.className = 'tab-indicator';
-	  tabIndicatorEl.setAttribute('aria-hidden', 'true');
-	  document.body.appendChild(tabIndicatorEl);
-	}
-	updateTabIndicator();
-	document.addEventListener('keydown', handleTabOrderKey);
-	document.addEventListener('focusin', updateTabIndicator);
-  } else {
-	if (tabIndicatorEl) {
-	  tabIndicatorEl.classList.remove('active');
-	}
-	document.removeEventListener('keydown', handleTabOrderKey);
-	document.removeEventListener('focusin', updateTabIndicator);
-  }
-  saveA11ySettings();
-}
-
-function handleTabOrderKey(e) {
-  if (e.key === 'Tab') {
-	setTimeout(updateTabIndicator, 50);
-  }
-}
-
-function updateTabIndicator() {
-  if (!tabIndicatorEl || !a11yState.tabOrder) return;
-  const focused = document.activeElement;
-  if (focused && focused !== document.body) {
-	const rect = focused.getBoundingClientRect();
-	tabIndicatorEl.style.top = (rect.top - 3) + 'px';
-	tabIndicatorEl.style.left = (rect.left - 3) + 'px';
-	tabIndicatorEl.style.width = (rect.width + 6) + 'px';
-	tabIndicatorEl.style.height = (rect.height + 6) + 'px';
-	tabIndicatorEl.classList.add('active');
-	
-	// Find tab order
-	const focusable = Array.from(document.querySelectorAll(
-	  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-	)).filter(el => !el.disabled && el.offsetParent !== null);
-	tabOrderIndex = focusable.indexOf(focused);
-  }
-}
-
-// Voice control support
-function toggleVoiceControl(enabled) {
-  a11yState.voiceControl = enabled;
-  if (enabled) {
-	document.body.classList.add('voice-control-mode');
-	// Add voice labels to interactive elements
-	document.querySelectorAll('button, a, input, select').forEach(el => {
-	  if (!el.getAttribute('data-voice-label')) {
-		const label = el.textContent.trim() || el.getAttribute('aria-label') || el.id || 'Element';
-		el.setAttribute('data-voice-label', label);
-	  }
-	});
-	initializeVoiceRecognition();
-  } else {
-	document.body.classList.remove('voice-control-mode');
-	if (window.voiceRecognition) {
-	  window.voiceRecognition.stop();
-	}
-  }
-  saveA11ySettings();
-}
-
-function initializeVoiceRecognition() {
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-	return; // Voice recognition not supported
-  }
-  
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = new SpeechRecognition();
-  recognition.continuous = true;
-  recognition.interimResults = false;
-  
-  recognition.onresult = (event) => {
-	const command = event.results[event.results.length - 1][0].transcript.toLowerCase();
-	handleVoiceCommand(command);
-  };
-  
-  recognition.start();
-  window.voiceRecognition = recognition;
-}
-
-function handleVoiceCommand(command) {
-  // Simple voice command handling
-  if (command.includes('start') || command.includes('begin')) {
-	document.getElementById('startBtn')?.click();
-  } else if (command.includes('cancel') || command.includes('stop')) {
-	document.querySelector('.secondary')?.click();
-  } else if (command.includes('submit') || command.includes('send')) {
-	document.getElementById('submitText')?.click();
-  }
-}
-
-// Keyboard shortcuts
-function setupKeyboardShortcuts() {
-  document.addEventListener('keydown', (e) => {
-	if (!a11yState.keyboardShortcuts) return;
-	
-	// Alt + A: Open accessibility menu
-	if (e.altKey && e.key === 'a') {
-	  e.preventDefault();
-	  document.getElementById('a11yToggle')?.click();
-	}
-	
-	// Alt + S: Start verification
-	if (e.altKey && e.key === 's') {
-	  e.preventDefault();
-	  document.getElementById('startBtn')?.click();
-	}
-	
-	// Escape: Close accessibility menu
-	if (e.key === 'Escape') {
-	  const menu = document.getElementById('a11yMenu');
-	  if (menu?.classList.contains('open')) {
-		document.getElementById('a11yToggle')?.click();
-	  }
-	}
-  });
-}
-
-// Save/load accessibility settings
-function saveA11ySettings() {
-  safeStorage.setItem('a11ySettings', JSON.stringify(a11yState));
-}
-
-function loadA11ySettings() {
-  const saved = safeStorage.getItem('a11ySettings');
-  if (saved) {
-	try {
-	  const savedSettings = JSON.parse(saved);
-	  Object.assign(a11yState, savedSettings);
-	  // Ensure keyboard shortcuts default to enabled if not set
-	  if (a11yState.keyboardShortcuts === undefined || a11yState.keyboardShortcuts === null) {
-		a11yState.keyboardShortcuts = true;
-	  }
-	  applyAllA11ySettings();
-	} catch (e) {
-	  console.warn('Failed to load accessibility settings:', e);
-	  // Ensure keyboard shortcuts are enabled by default on error
-	  a11yState.keyboardShortcuts = true;
-	}
-  } else {
-	// No saved settings - keyboard shortcuts are enabled by default
-	a11yState.keyboardShortcuts = true;
-  }
-}
-
-function applyAllA11ySettings() {
-  toggleHighContrast(a11yState.highContrast);
-  setTextSize(a11yState.textSize);
-  setColorScheme(a11yState.colorScheme);
-  toggleEnhancedFocus(a11yState.enhancedFocus);
-  toggleReduceMotion(a11yState.reduceMotion);
-  toggleSimpleLanguage(a11yState.simpleLanguage);
-  toggleReadingGuide(a11yState.readingGuide);
-  toggleTabOrder(a11yState.tabOrder);
-  // Set keyboard shortcuts checkbox to match state (defaults to true)
-  const kbCheckbox = document.getElementById('keyboardShortcuts');
-  if (kbCheckbox) {
-	kbCheckbox.checked = a11yState.keyboardShortcuts !== false;
-	kbCheckbox.setAttribute('aria-checked', (a11yState.keyboardShortcuts !== false).toString());
-	// Ensure state matches checkbox
-	if (a11yState.keyboardShortcuts === undefined || a11yState.keyboardShortcuts === null) {
-	  a11yState.keyboardShortcuts = true;
-	}
-  }
-  document.getElementById('screenReaderMode').value = a11yState.screenReaderMode;
-  document.getElementById('announceChanges').checked = a11yState.announceChanges;
-  document.getElementById('ariaLive').checked = a11yState.ariaLive;
-  applyScreenReaderOptimizations();
-}
-
-function resetA11ySettings() {
-  safeStorage.removeItem('a11ySettings');
-  location.reload();
-}
-
-// Wire up accessibility controls
-document.addEventListener('DOMContentLoaded', () => {
-  // Accessibility menu toggle
-  const a11yToggle = document.getElementById('a11yToggle');
-  const a11yMenu = document.getElementById('a11yMenu');
-  
-  a11yToggle?.addEventListener('click', () => {
-	const isOpen = a11yMenu.classList.toggle('open');
-	a11yToggle.setAttribute('aria-expanded', isOpen.toString());
-	if (isOpen) {
-	  a11yMenu.focus();
-	}
-  });
-  
-  // High contrast
-  document.getElementById('highContrast')?.addEventListener('change', (e) => {
-	toggleHighContrast(e.target.checked);
-  });
-  
-  // Text size
-  const textSizeSlider = document.getElementById('textSize');
-  textSizeSlider?.addEventListener('input', (e) => {
-	setTextSize(parseInt(e.target.value));
-  });
-  
-  // Color scheme
-  document.getElementById('colorScheme')?.addEventListener('change', (e) => {
-	setColorScheme(e.target.value);
-  });
-  
-  // Enhanced focus
-  document.getElementById('enhancedFocus')?.addEventListener('change', (e) => {
-	toggleEnhancedFocus(e.target.checked);
-  });
-  
-  // Reduce motion
-  document.getElementById('reduceMotion')?.addEventListener('change', (e) => {
-	toggleReduceMotion(e.target.checked);
-  });
-  
-  // Simple language
-  document.getElementById('simpleLanguage')?.addEventListener('change', (e) => {
-	toggleSimpleLanguage(e.target.checked);
-  });
-  
-  // Reading guide
-  document.getElementById('readingGuide')?.addEventListener('change', (e) => {
-	toggleReadingGuide(e.target.checked);
-  });
-  
-  // Keyboard shortcuts
-  document.getElementById('keyboardShortcuts')?.addEventListener('change', (e) => {
-	a11yState.keyboardShortcuts = e.target.checked;
-	saveA11ySettings();
-  });
-  
-  // Tab order
-  document.getElementById('tabOrder')?.addEventListener('change', (e) => {
-	toggleTabOrder(e.target.checked);
-  });
-  
-  // Screen reader mode
-  document.getElementById('screenReaderMode')?.addEventListener('change', (e) => {
-	a11yState.screenReaderMode = e.target.value;
-	applyScreenReaderOptimizations();
-	saveA11ySettings();
-  });
-  
-  // Announce changes
-  document.getElementById('announceChanges')?.addEventListener('change', (e) => {
-	a11yState.announceChanges = e.target.checked;
-	saveA11ySettings();
-  });
-  
-  // ARIA live
-  document.getElementById('ariaLive')?.addEventListener('change', (e) => {
-	a11yState.ariaLive = e.target.checked;
-	saveA11ySettings();
-  });
-  
-  // Load settings and initialize
-  loadA11ySettings();
-  // Ensure keyboard shortcuts are enabled by default if not already set
-  if (a11yState.keyboardShortcuts === undefined || a11yState.keyboardShortcuts === null) {
-	a11yState.keyboardShortcuts = true;
-	const kbShortcutsCheckbox = document.getElementById('keyboardShortcuts');
-	if (kbShortcutsCheckbox) {
-	  kbShortcutsCheckbox.checked = true;
-	  kbShortcutsCheckbox.setAttribute('aria-checked', 'true');
-	}
-  }
-  setupKeyboardShortcuts();
-  applyScreenReaderOptimizations();
-  
-  // Close menu when clicking outside
-  document.addEventListener('click', (e) => {
-	if (a11yMenu && !a11yMenu.contains(e.target) && !a11yToggle.contains(e.target)) {
-	  if (a11yMenu.classList.contains('open')) {
-		a11yMenu.classList.remove('open');
-		a11yToggle.setAttribute('aria-expanded', 'false');
-	  }
-	}
   });
 });
 </script>
