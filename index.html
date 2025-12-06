@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Accessibility CAPTCHA - Home</title>
+<link rel="stylesheet" href="accessibility.css">
+<style>
+  :root{
+	--bg:#f6f8fa; --card:#fff; --accent:#2563eb; --muted:#6b7280; --error:#dc2626;
+	font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  *:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  *:focus{outline:3px solid var(--accent);outline-offset:2px}
+  .js-focus-visible *:focus:not(.focus-visible){outline:none}
+  body{margin:0;background:linear-gradient(180deg,#eef2ff, var(--bg));min-height:100vh;padding:0}
+  .skip-link{position:absolute;top:-40px;left:0;background:var(--accent);color:#fff;padding:8px 16px;text-decoration:none;border-radius:4px;z-index:1000}
+  .skip-link:focus{top:8px}
+  .container{max-width:1200px;margin:0 auto;padding:32px 24px}
+  header{text-align:center;margin-bottom:48px;padding:32px 0}
+  header h1{margin:0 0 12px;font-size:36px;font-weight:700;color:#1f2937}
+  header p{margin:0;font-size:18px;color:var(--muted);max-width:700px;margin-left:auto;margin-right:auto}
+  
+  .grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:24px;margin-bottom:48px}
+  .card{background:var(--card);border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);padding:24px;transition:transform 0.2s,box-shadow 0.2s;border:2px solid transparent}
+  .card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.12);border-color:var(--accent)}
+  .card:focus-within{outline:3px solid var(--accent);outline-offset:2px;border-color:var(--accent)}
+  .card h2{margin:0 0 12px;font-size:20px;font-weight:600;color:#1f2937}
+  .card p{margin:0 0 16px;color:var(--muted);line-height:1.6;font-size:14px}
+  .card a{display:inline-block;background:var(--accent);color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:500;transition:background 0.2s;min-height:44px;line-height:24px;box-sizing:border-box}
+  .card a:hover{background:#1d4ed8}
+  .card a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  
+  .downloads{background:var(--card);border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);padding:32px;margin-bottom:48px}
+  .downloads h2{margin:0 0 20px;font-size:24px;font-weight:600;color:#1f2937}
+  .download-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px}
+  .download-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:#0ea5a4;color:#fff;padding:14px 20px;border-radius:8px;text-decoration:none;font-weight:500;transition:background 0.2s;min-height:44px;border:none;cursor:pointer;font-size:14px}
+  .download-btn:hover{background:#0d9488}
+  .download-btn:focus-visible{outline:3px solid #0ea5a4;outline-offset:2px}
+  .download-btn.css{background:#2563eb}
+  .download-btn.css:hover{background:#1d4ed8}
+  .download-btn.js{background:#7c3aed}
+  .download-btn.js:hover{background:#6d28d9}
+  
+  .github-section{background:var(--card);border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);padding:32px;text-align:center}
+  .github-section h2{margin:0 0 16px;font-size:24px;font-weight:600;color:#1f2937}
+  .github-section p{margin:0 0 24px;color:var(--muted);line-height:1.6}
+  .github-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#24292e;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:500;transition:background 0.2s;min-height:44px}
+  .github-link:hover{background:#000}
+  .github-link:focus-visible{outline:3px solid #24292e;outline-offset:2px}
+  
+  footer{text-align:center;padding:32px 0;color:var(--muted);font-size:14px;border-top:2px solid #e6e9ef;margin-top:64px}
+  
+  @media (max-width: 768px) {
+	.container{padding:16px}
+	header h1{font-size:28px}
+	header p{font-size:16px}
+	.grid{grid-template-columns:1fr;gap:16px}
+	.download-grid{grid-template-columns:1fr}
+  }
+  
+  /* High contrast mode */
+  body.high-contrast{background:#000 !important;color:#fff !important}
+  body.high-contrast .card,body.high-contrast .downloads,body.high-contrast .github-section{background:#000 !important;border:3px solid #fff !important;color:#fff !important}
+  body.high-contrast h1,body.high-contrast h2,body.high-contrast p{color:#fff !important}
+  body.high-contrast .card a,body.high-contrast .download-btn,body.high-contrast .github-link{background:#fff !important;color:#000 !important;border:2px solid #fff !important}
+</style>
+<script src="accessibility.js"></script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <!-- Accessibility panel will be auto-injected by accessibility.js -->
+  
+  <div class="container">
+	<header>
+	  <h1>Accessibility CAPTCHA</h1>
+	  <p>Comprehensive accessibility features with plug-and-play plugin support. Explore the demo, read the guidelines, and download the accessibility plugin for your own projects.</p>
+	</header>
+	
+	<main id="main-content" role="main">
+	  <section aria-labelledby="pages-heading">
+		<h2 id="pages-heading" class="sr-only">Available Pages</h2>
+		<div class="grid">
+		  <article class="card">
+			<h2>CAPTCHA Demo</h2>
+			<p>Interactive demonstration of accessible CAPTCHA verification with multiple modes: behavioral scoring, WebAuthn/passkey, and screen-reader-friendly text questions.</p>
+			<a href="captcha.html">View Demo →</a>
+		  </article>
+		  
+		  <article class="card">
+			<h2>Accessibility Guidelines</h2>
+			<p>Comprehensive guide for implementing accessibility features in web applications. Learn about visual, motor, cognitive, and screen reader accessibility.</p>
+			<a href="guidelines.html">Read Guidelines →</a>
+		  </article>
+		  
+		  <article class="card">
+			<h2>Plugin Integration</h2>
+			<p>Learn how to integrate the accessibility plugin into your own projects. Includes API reference, customization options, and troubleshooting tips.</p>
+			<a href="viewer.html?file=PLUGIN_INTEGRATION.md">View Integration Guide →</a>
+		  </article>
+		  
+		  <article class="card">
+			<h2>Plugin README</h2>
+			<p>Quick start guide for the accessibility plugin. Get up and running with plug-and-play accessibility features in minutes.</p>
+			<a href="viewer.html?file=README_ACCESSIBILITY_PLUGIN.md">Read README →</a>
+		  </article>
+		  
+		  <article class="card">
+			<h2>Refactoring Summary</h2>
+			<p>Technical documentation about the refactoring process that created the standalone accessibility plugin files.</p>
+			<a href="viewer.html?file=REFACTORING_SUMMARY.md">View Summary →</a>
+		  </article>
+		</div>
+	  </section>
+	  
+	  <section class="downloads" aria-labelledby="downloads-heading">
+		<h2 id="downloads-heading">Download Accessibility Plugin</h2>
+		<p style="margin-bottom:20px;color:var(--muted)">Add comprehensive accessibility features to any webpage with these standalone files.</p>
+		<div class="download-grid">
+		  <a href="accessibility.css" download="accessibility.css" class="download-btn css">
+			<span>📄</span>
+			<span>Download CSS</span>
+		  </a>
+		  <a href="accessibility.js" download="accessibility.js" class="download-btn js">
+			<span>📜</span>
+			<span>Download JavaScript</span>
+		  </a>
+		</div>
+		<p style="margin-top:20px;font-size:13px;color:var(--muted)">Simply include both files in your HTML to add all accessibility features automatically.</p>
+	  </section>
+	  
+	  <section class="github-section" aria-labelledby="github-heading">
+		<h2 id="github-heading">Source Code</h2>
+		<p>View the complete source code, contribute, or report issues on GitHub.</p>
+		<a href="https://github.com/alexanderdfox/Accessibility-CAPTCHA" target="_blank" rel="noopener noreferrer" class="github-link">
+		  <span>🔗</span>
+		  <span>View on GitHub</span>
+		</a>
+	  </section>
+	</main>
+	
+	<footer role="contentinfo">
+	  <p>Accessibility CAPTCHA - Making the web accessible for everyone</p>
+	</footer>
+  </div>
+  
+  <div id="lr" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+  
+<script>
+// Use A11yPlugin API for screen reader announcements
+function announceToScreenReader(message, priority = 'polite') {
+  if (window.A11yPlugin && window.A11yPlugin.announceToScreenReader) {
+	window.A11yPlugin.announceToScreenReader(message, priority);
+  }
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', () => {
+  // Announce page load to screen readers
+  setTimeout(() => {
+	announceToScreenReader('Accessibility CAPTCHA home page loaded. Use navigation links to explore the demo and documentation.');
+  }, 500);
+});
+</script>
+</body>
+</html>

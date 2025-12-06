@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Accessibility Guidelines - Reader</title>
+<title>Markdown Viewer</title>
 <link rel="stylesheet" href="accessibility.css">
 <style>
   :root{
@@ -92,8 +92,8 @@
 	<header>
 	  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
 		<div style="flex:1;min-width:250px">
-		  <h1>Accessibility Implementation Guidelines</h1>
-		  <p>Comprehensive guide for creating accessible web applications</p>
+		  <h1 id="pageTitle">Loading...</h1>
+		  <p id="pageDescription">Loading document...</p>
 		</div>
 		<div style="display:flex;align-items:center;gap:8px">
 		  <label for="audioToggle" style="font-size:14px;font-weight:500;color:#374151;cursor:pointer;display:flex;align-items:center;gap:6px">
@@ -109,8 +109,8 @@
 	</header>
 	
 	<main id="main-content" role="main">
-	  <div id="content" class="loading" role="region" aria-label="Guidelines content">
-		<p>Loading accessibility guidelines...</p>
+	  <div id="content" class="loading" role="region" aria-label="Document content">
+		<p>Loading document...</p>
 	  </div>
 	</main>
 	
@@ -243,99 +243,6 @@ function escapeHtml(text) {
 	return div.innerHTML;
 }
 
-// Generate table of contents
-function generateTOC(html) {
-  const headings = html.match(/<h[2-3][^>]*>(.*?)<\/h[2-3]>/gi) || [];
-  if (headings.length === 0) return '';
-  
-  let toc = '<nav aria-label="Table of contents"><h2>Table of Contents</h2><ul>';
-  
-  headings.forEach((heading, index) => {
-	const text = heading.replace(/<[^>]+>/g, '');
-	const level = heading.match(/<h(\d)/)[1];
-	const id = 'heading-' + index;
-	const indent = level === '3' ? ' style="padding-left: 16px;"' : '';
-	
-	// Add ID to heading in HTML
-	html = html.replace(heading, heading.replace(/<h\d/, `<h${level} id="${id}"`));
-	
-	toc += `<li${indent}><a href="#${id}">${text}</a></li>`;
-  });
-  
-  toc += '</ul></nav>';
-  
-  return { html, toc };
-}
-
-// Load and display markdown
-async function loadGuidelines() {
-  try {
-	const response = await fetch('ACCESSIBILITY_GUIDELINES.md');
-	if (!response.ok) {
-	  throw new Error('Failed to load guidelines file');
-	}
-	
-	const markdown = await response.text();
-	let html = marked.parse(markdown);
-	
-	// Generate TOC
-	const { html: updatedHtml, toc } = generateTOC(html);
-	html = updatedHtml;
-	
-	// Insert TOC after first heading
-	html = html.replace(/(<h1>.*?<\/h1>)/, '$1' + toc);
-	
-	// Update content
-	const contentDiv = document.getElementById('content');
-	contentDiv.innerHTML = html;
-	contentDiv.classList.remove('loading');
-	
-	// Update last updated
-	const lastUpdated = document.getElementById('lastUpdated');
-	lastUpdated.textContent = new Date().toLocaleDateString();
-	
-	// Add smooth scroll for anchor links
-	document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-	  anchor.addEventListener('click', function(e) {
-		e.preventDefault();
-		const target = document.querySelector(this.getAttribute('href'));
-		if (target) {
-		  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-		  target.setAttribute('tabindex', '-1');
-		  target.focus();
-		}
-	  });
-	});
-	
-	// Show back to top button on scroll
-	let backToTop = document.querySelector('.back-to-top');
-	window.addEventListener('scroll', () => {
-	  if (window.pageYOffset > 300) {
-		backToTop.classList.add('visible');
-	  } else {
-		backToTop.classList.remove('visible');
-	  }
-	});
-	
-	backToTop.addEventListener('click', (e) => {
-	  e.preventDefault();
-	  window.scrollTo({ top: 0, behavior: 'smooth' });
-	});
-	
-  } catch (error) {
-	console.error('Error loading guidelines:', error);
-	const contentDiv = document.getElementById('content');
-	contentDiv.innerHTML = `
-	  <div class="error" role="alert">
-		<strong>Error loading guidelines</strong>
-		<p>Could not load the accessibility guidelines file. Please ensure ACCESSIBILITY_GUIDELINES.md exists in the same directory.</p>
-		<p><a href="ACCESSIBILITY_GUIDELINES.md" download>Download the guidelines file directly</a></p>
-	  </div>
-	`;
-	contentDiv.classList.remove('loading');
-  }
-}
-
 // Generate table of contents from HTML headings
 function generateTOC(html) {
 	// Extract all h2 and h3 headings
@@ -383,6 +290,117 @@ function generateTOC(html) {
 	return { html, toc };
 }
 
+// Get markdown file from URL parameter
+function getMarkdownFile() {
+	const params = new URLSearchParams(window.location.search);
+	const file = params.get('file');
+	return file || 'ACCESSIBILITY_GUIDELINES.md';
+}
+
+// Extract title and description from markdown
+function extractMetadata(markdown) {
+	const lines = markdown.split('\n');
+	let title = 'Document Viewer';
+	let description = 'Viewing markdown document';
+	
+	// Try to get title from first h1
+	const h1Match = markdown.match(/^#\s+(.+)$/m);
+	if (h1Match) {
+		title = h1Match[1].trim();
+	}
+	
+	// Try to get description from first paragraph after h1
+	const afterH1 = markdown.split(/^#\s+.+$/m)[1];
+	if (afterH1) {
+		const firstPara = afterH1.match(/^([^\n#].+)$/m);
+		if (firstPara) {
+			description = firstPara[1].trim().substring(0, 100);
+			if (description.length === 100) description += '...';
+		}
+	}
+	
+	return { title, description };
+}
+
+// Load and display markdown
+async function loadMarkdown() {
+  try {
+	const markdownFile = getMarkdownFile();
+	const response = await fetch(markdownFile);
+	if (!response.ok) {
+	  throw new Error(`Failed to load file: ${markdownFile}`);
+	}
+	
+	const markdown = await response.text();
+	
+	// Extract metadata for header
+	const { title, description } = extractMetadata(markdown);
+	document.getElementById('pageTitle').textContent = title;
+	document.getElementById('pageDescription').textContent = description;
+	document.title = title + ' - Markdown Viewer';
+	
+	let html = marked.parse(markdown);
+	
+	// Generate TOC
+	const { html: updatedHtml, toc } = generateTOC(html);
+	html = updatedHtml;
+	
+	// Insert TOC after first heading
+	html = html.replace(/(<h1[^>]*>.*?<\/h1>)/, '$1' + toc);
+	
+	// Update content
+	const contentDiv = document.getElementById('content');
+	contentDiv.innerHTML = html;
+	contentDiv.classList.remove('loading');
+	
+	// Update last updated
+	const lastUpdated = document.getElementById('lastUpdated');
+	lastUpdated.textContent = new Date().toLocaleDateString();
+	
+	// Add smooth scroll for anchor links
+	document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+	  anchor.addEventListener('click', function(e) {
+		e.preventDefault();
+		const target = document.querySelector(this.getAttribute('href'));
+		if (target) {
+		  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		  target.setAttribute('tabindex', '-1');
+		  target.focus();
+		}
+	  });
+	});
+	
+	// Show back to top button on scroll
+	let backToTop = document.querySelector('.back-to-top');
+	window.addEventListener('scroll', () => {
+	  if (window.pageYOffset > 300) {
+		backToTop.classList.add('visible');
+	  } else {
+		backToTop.classList.remove('visible');
+	  }
+	});
+	
+	backToTop.addEventListener('click', (e) => {
+	  e.preventDefault();
+	  window.scrollTo({ top: 0, behavior: 'smooth' });
+	});
+	
+  } catch (error) {
+	console.error('Error loading markdown:', error);
+	const contentDiv = document.getElementById('content');
+	const markdownFile = getMarkdownFile();
+	contentDiv.innerHTML = `
+	  <div class="error" role="alert">
+		<strong>Error loading document</strong>
+		<p>Could not load the file: ${escapeHtml(markdownFile)}. Please ensure the file exists in the same directory.</p>
+		<p><a href="${escapeHtml(markdownFile)}" download>Download the file directly</a></p>
+		<p><a href="index.html">← Back to Home</a></p>
+	  </div>
+	`;
+	contentDiv.classList.remove('loading');
+  }
+}
+
 // Initialize page-specific functionality after accessibility plugin loads
 function initializePage() {
   // Wire up header audio toggle to use plugin API
@@ -395,8 +413,8 @@ function initializePage() {
 	});
   }
   
-  // Load guidelines (page-specific functionality)
-  loadGuidelines();
+  // Load markdown (page-specific functionality)
+  loadMarkdown();
   
   // Add Alt+T shortcut for back to top (page-specific)
   document.addEventListener('keydown', (e) => {
@@ -418,4 +436,3 @@ if (document.readyState === 'loading') {
 </script>
 </body>
 </html>
-

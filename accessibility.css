@@ -1,0 +1,508 @@
+/* ============================================
+   Comprehensive Accessibility Plugin - CSS
+   Plug-and-play accessibility features for any webpage
+   ============================================ */
+
+/* Screen reader only class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Accessibility Settings Panel */
+.a11y-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+}
+
+.a11y-toggle {
+  background: #1f2937;
+  color: #fff;
+  border: 0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-height: 44px;
+}
+
+.a11y-toggle:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+.a11y-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: #fff;
+  border: 2px solid #e6e9ef;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  min-width: 320px;
+  max-width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: none;
+}
+
+.a11y-menu.open {
+  display: block;
+}
+
+.a11y-section {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e6e9ef;
+}
+
+.a11y-section:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.a11y-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: #1f2937;
+}
+
+.a11y-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.a11y-control:last-child {
+  margin-bottom: 0;
+}
+
+.a11y-control label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  flex: 1;
+  margin: 0;
+}
+
+.a11y-control input[type="range"] {
+  flex: 1;
+  max-width: 150px;
+}
+
+.a11y-value {
+  font-size: 12px;
+  color: #6b7280;
+  min-width: 40px;
+  text-align: right;
+}
+
+select.a11y-select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 2px solid #e6e9ef;
+  font-size: 14px;
+  min-height: 40px;
+  width: 100%;
+}
+
+/* Text Size Controls */
+.large-text {
+  font-size: 125%;
+}
+
+.extra-large-text {
+  font-size: 150%;
+}
+
+.huge-text {
+  font-size: 200%;
+}
+
+/* Reduce Motion */
+.reduce-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Enhanced Focus */
+.enhanced-focus *:focus-visible {
+  outline-width: 4px !important;
+  outline-offset: 4px !important;
+}
+
+/* Color Blindness Filters */
+.color-protanopia {
+  filter: url(#protanopia);
+}
+
+.color-deuteranopia {
+  filter: url(#deuteranopia);
+}
+
+.color-tritanopia {
+  filter: url(#tritanopia);
+}
+
+.color-monochrome {
+  filter: grayscale(100%);
+}
+
+/* Reading Guide */
+.reading-guide {
+  position: absolute;
+  background: rgba(255, 255, 0, 0.3);
+  pointer-events: none;
+  z-index: 9999;
+  display: none;
+}
+
+.reading-guide.active {
+  display: block;
+}
+
+/* Tab Order Indicator */
+.tab-indicator {
+  position: absolute;
+  border: 3px solid #ff0000;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 10001;
+  display: none;
+}
+
+.tab-indicator.active {
+  display: block;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Voice Control Hints */
+[data-voice-label] {
+  position: relative;
+}
+
+[data-voice-label]::after {
+  content: attr(data-voice-label);
+  position: absolute;
+  left: 100%;
+  margin-left: 8px;
+  padding: 4px 8px;
+  background: #000;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 10002;
+}
+
+.voice-control-mode [data-voice-label]::after {
+  opacity: 1;
+}
+
+/* Screen Reader Optimizations */
+.sr-optimize-nvda *[role="button"]:focus::before,
+.sr-optimize-jaws *[role="button"]:focus::before {
+  content: "Button: ";
+}
+
+/* High Contrast Mode - Comprehensive Styles */
+body.high-contrast {
+  background: #000 !important;
+  color: #fff !important;
+  background-image: none !important;
+}
+
+/* Text elements - white on black */
+body.high-contrast h1,
+body.high-contrast h2,
+body.high-contrast h3,
+body.high-contrast h4,
+body.high-contrast h5,
+body.high-contrast h6 {
+  color: #fff !important;
+}
+
+body.high-contrast p,
+body.high-contrast .lead,
+body.high-contrast label,
+body.high-contrast .note,
+body.high-contrast .footer,
+body.high-contrast small,
+body.high-contrast .kv,
+body.high-contrast .status {
+  color: #fff !important;
+}
+
+body.high-contrast * {
+  color: #fff !important;
+}
+
+/* Buttons - white borders, white text on black */
+body.high-contrast button {
+  border: 3px solid #fff !important;
+  background: #000 !important;
+  color: #fff !important;
+}
+
+body.high-contrast button.mode {
+  background: #000 !important;
+  color: #fff !important;
+  border: 3px solid #fff !important;
+}
+
+body.high-contrast button.mode[aria-pressed="true"] {
+  background: #fff !important;
+  color: #000 !important;
+  border: 3px solid #fff !important;
+}
+
+body.high-contrast button.primary {
+  background: #fff !important;
+  color: #000 !important;
+  border: 3px solid #fff !important;
+}
+
+body.high-contrast button.secondary {
+  background: #000 !important;
+  color: #fff !important;
+  border: 3px solid #fff !important;
+}
+
+body.high-contrast button[role="switch"] {
+  background: #000 !important;
+  border: 3px solid #fff !important;
+}
+
+body.high-contrast button[role="switch"][aria-checked="true"] {
+  background: #fff !important;
+}
+
+body.high-contrast button[role="switch"][aria-checked="false"] {
+  background: #000 !important;
+}
+
+body.high-contrast button[role="switch"] span {
+  background: #fff !important;
+}
+
+body.high-contrast button:disabled {
+  opacity: 0.5 !important;
+  color: #888 !important;
+}
+
+/* Form elements */
+body.high-contrast input,
+body.high-contrast select,
+body.high-contrast textarea {
+  border: 3px solid #fff !important;
+  background: #000 !important;
+  color: #fff !important;
+}
+
+body.high-contrast input::placeholder {
+  color: #888 !important;
+}
+
+body.high-contrast select option {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+/* Common elements */
+body.high-contrast .card {
+  background: #000 !important;
+  border: 3px solid #fff !important;
+  color: #fff !important;
+}
+
+body.high-contrast .container {
+  background: #000 !important;
+  border: 3px solid #fff !important;
+}
+
+body.high-contrast code {
+  background: #000 !important;
+  border: 1px solid #fff !important;
+  color: #fff !important;
+}
+
+body.high-contrast pre {
+  background: #000 !important;
+  border: 1px solid #fff !important;
+}
+
+body.high-contrast pre code {
+  color: #fff !important;
+}
+
+body.high-contrast table,
+body.high-contrast th,
+body.high-contrast td {
+  border-color: #fff !important;
+}
+
+/* Colored messages - keep distinct colors for accessibility */
+body.high-contrast .success {
+  background: #000 !important;
+  border: 3px solid #0f0 !important;
+  color: #0f0 !important;
+}
+
+body.high-contrast .success * {
+  color: #0f0 !important;
+}
+
+body.high-contrast .danger {
+  background: #000 !important;
+  border: 3px solid #f00 !important;
+  color: #f00 !important;
+}
+
+body.high-contrast .danger * {
+  color: #f00 !important;
+}
+
+body.high-contrast .error-message {
+  color: #f00 !important;
+}
+
+/* Accessibility panel in high contrast */
+body.high-contrast .a11y-menu {
+  background: #000 !important;
+  border: 3px solid #fff !important;
+  color: #fff !important;
+}
+
+body.high-contrast .a11y-toggle {
+  background: #fff !important;
+  color: #000 !important;
+  border: 3px solid #fff !important;
+}
+
+body.high-contrast .a11y-section {
+  border-bottom-color: #fff !important;
+}
+
+body.high-contrast .a11y-section h3 {
+  color: #fff !important;
+}
+
+body.high-contrast .a11y-control label {
+  color: #fff !important;
+}
+
+body.high-contrast .a11y-value {
+  color: #fff !important;
+}
+
+body.high-contrast .a11y-select {
+  background: #000 !important;
+  color: #fff !important;
+  border: 3px solid #fff !important;
+}
+
+/* Links */
+body.high-contrast a {
+  color: #fff !important;
+  text-decoration: underline;
+}
+
+body.high-contrast a:visited {
+  color: #ccc !important;
+}
+
+body.high-contrast a:hover,
+body.high-contrast a:focus {
+  color: #fff !important;
+  outline: 3px solid #fff !important;
+  background: #333 !important;
+}
+
+body.high-contrast .skip-link {
+  background: #fff !important;
+  color: #000 !important;
+}
+
+body.high-contrast header {
+  border-bottom-color: #fff !important;
+}
+
+body.high-contrast .back-to-top {
+  background: #fff !important;
+  color: #000 !important;
+  border: 3px solid #fff !important;
+}
+
+/* Simplified language indicator */
+.simplified-text {
+  font-size: 110%;
+  line-height: 1.8;
+  max-width: 65ch;
+}
+
+/* Media Queries */
+@media (prefers-contrast: high) {
+  * {
+    border-width: 2px !important;
+  }
+  
+  button,
+  input,
+  select {
+    border-width: 3px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a11y-menu {
+    transition: none;
+  }
+  
+  .reading-guide {
+    transition: none;
+  }
+  
+  .tab-indicator {
+    animation: none;
+  }
+}
+
+/* SVG Filters for Color Blindness (injected by JS) */
+.a11y-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
